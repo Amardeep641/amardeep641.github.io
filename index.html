@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Me & Love App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Playfair Display', serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ffe6f0, #ffffff);
+            color: #333;
+            padding: 10px;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 30px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #2c2c2c;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            position: relative;
+        }
+
+        button:hover {
+            background: #b0b0b0;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .yes-button {
+            background: #4a4a4a;
+            color: #fff;
+        }
+
+        .no-button {
+            background: #9e9e9e;
+        }
+
+        .no-message {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            color: red;
+            visibility: hidden;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 5px;
+        }
+
+        /* Sahi Jawab & Love Message Styling */
+        .sahi-jawab, .love-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            font-size: 4rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 0 0 20px 20px;
+            visibility: hidden;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 100px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .sahi-jawab, .love-message {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sahi Jawab for First Question -->
+    <div class="sahi-jawab" id="sahiJawab1">Sahi Jawab!</div>
+
+    <!-- Love Message for Second Question -->
+    <div class="love-message" id="loveMessage">I love you too, cutie!</div>
+
+    <!-- Ahana's Question (Visible by Default) -->
+    <div class="container" id="ahanaContainer">
+        <h1>Ahana, do you want me to join you?</h1>
+        <div class="button-container">
+            <button class="yes-button" onclick="showSahiJawab(1)">Yes</button>
+            <button class="no-button" id="noButton" onclick="moveButton()">No</button>
+            <div class="no-message" id="noMessage">Jhoothi, sahi jawab select karo</div>
+        </div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <!-- Love Question (Hidden Initially) -->
+    <div class="container" id="loveContainer" style="display: none;">
+        <h1>Do you love me, cutie?</h1>
+        <div class="button-container">
+            <button class="yes-button" onclick="showLoveMessage()">Yes</button>
+            <button class="no-button" id="noButton2" onclick="moveButton()">No</button>
+            <div class="no-message" id="noMessage2">Jhoothi, sahi jawab select karo</div>
+        </div>
+        <div class="result" id="result2"></div>
+    </div>
+
+    <script>
+        function moveButton() {
+            const noButton = document.activeElement.id === 'noButton' ? document.getElementById('noButton') : document.getElementById('noButton2');
+            const noMessage = document.getElementById(noButton.id === 'noButton' ? 'noMessage' : 'noMessage2');
+
+            const angle = (parseInt(noButton.dataset.angle) || 0) + 45;
+            noButton.dataset.angle = angle;
+
+            const radians = angle * (Math.PI / 180);
+            const radius = 150;
+
+            const newX = radius * Math.cos(radians);
+            const newY = radius * Math.sin(radians);
+
+            noButton.style.transform = `translate(${newX}px, ${newY}px)`;
+
+            // Show the message just below the button
+            noMessage.style.visibility = 'visible';
+            setTimeout(() => {
+                noMessage.style.visibility = 'hidden';
+            }, 2000); // Hide after 2 seconds
+        }
+
+        function showSahiJawab(questionNumber) {
+            const sahiJawabDiv = document.getElementById(`sahiJawab${questionNumber}`);
+            sahiJawabDiv.style.visibility = 'visible';
+
+            setTimeout(() => {
+                sahiJawabDiv.style.visibility = 'hidden';
+                if (questionNumber === 1) {
+                    showLoveQuestion();
+                }
+            }, 2000);
+        }
+
+        function showLoveQuestion() {
+            document.getElementById('ahanaContainer').style.display = 'none';
+            document.getElementById('loveContainer').style.display = 'block';
+        }
+
+        function showLoveMessage() {
+            const loveMessageDiv = document.getElementById('loveMessage');
+            loveMessageDiv.style.visibility = 'visible';
+
+            setTimeout(() => {
+                loveMessageDiv.style.visibility = 'hidden';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
