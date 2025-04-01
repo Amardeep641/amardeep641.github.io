@@ -306,17 +306,14 @@
 
         function showLoveMessage() {
             const loveMessageDiv = document.getElementById('loveMessage');
-    loveMessageDiv.style.visibility = 'visible';
+            loveMessageDiv.style.visibility = 'visible';
 
-    // Delay the flower shower effect by 1 second (you can adjust the value)
-    setTimeout(() => {
-        flowerShower();
-    }, 1000); // Delay of 1 second before the flowers start falling
+            // Flower shower effect
+            flowerShower();
 
-    setTimeout(() => {
-        loveMessageDiv.style.visibility = 'hidden';
-    }, 2000);
-
+            setTimeout(() => {
+                loveMessageDiv.style.visibility = 'hidden';
+            }, 2000);
         }
 
         function flowerShower() {
