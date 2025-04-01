@@ -32,12 +32,13 @@
             color: white;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* Center vertically */
+            align-items: center;     /* Center horizontally */
             text-align: center;
             z-index: 1000;
             padding: 20px;
             box-sizing: border-box;
+            overflow: hidden; /* Ensure no content is cut off */
         }
 
         .overlay h2 {
@@ -45,14 +46,16 @@
             margin-bottom: 20px;
             font-weight: 700;
             text-transform: uppercase;
-            max-width: 80%;
+            max-width: 90%; /* Reduced max width for smaller screens */
+            word-wrap: break-word;
         }
 
         .overlay p {
             font-size: 1.2rem;
             margin-bottom: 30px;
             font-weight: 500;
-            max-width: 80%;
+            max-width: 90%; /* Reduced max width for smaller screens */
+            word-wrap: break-word;
         }
 
         .overlay input[type="checkbox"] {
@@ -80,6 +83,23 @@
         .overlay button:hover {
             background-color: #6b6b6b;
             transform: scale(1.05);
+        }
+
+        /* Adjustments for smaller screens */
+        @media (max-width: 600px) {
+            .overlay h2 {
+                font-size: 1.5rem;  /* Smaller heading font size */
+                margin-bottom: 10px;
+            }
+
+            .overlay p {
+                font-size: 1rem;  /* Smaller paragraph font size */
+            }
+
+            .overlay button {
+                padding: 12px 24px;  /* Adjust button size */
+                font-size: 14px;      /* Smaller font size for button */
+            }
         }
 
         .container {
@@ -154,26 +174,6 @@
             margin-top: 5px;
         }
 
-        /* Flower Shower Animation */
-        .flower {
-            position: absolute;
-            top: -50px;
-            animation: fall 2s ease-in forwards;
-            z-index: 9999; /* Ensure flowers appear above everything else */
-        }
-
-        @keyframes fall {
-            0% {
-                top: -50px;
-                opacity: 1;
-            }
-            100% {
-                top: 100vh;
-                opacity: 0;
-            }
-        }
-
-        /* Sahi Jawab & Love Message Styling */
         .sahi-jawab, .love-message {
             position: fixed;
             top: 0;
@@ -195,37 +195,36 @@
             visibility: hidden;
         }
 
-        /* Responsive Design */
         @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-            }
-
-            button {
-                padding: 12px 20px;
-                font-size: 14px;
-                min-width: 100px;
-            }
-
-            .container {
-                padding: 30px 20px;
-            }
-
             .sahi-jawab, .love-message {
                 font-size: 3rem;
+            }
+        }
+
+        .flower {
+            position: absolute;
+            top: -50px;
+            animation: flowerFall 2s forwards;
+            z-index: 9999; /* Ensure flowers fall on top */
+        }
+
+        @keyframes flowerFall {
+            to {
+                transform: translateY(100vh);
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Full Screen Message Overlay -->
+    <!-- Overlay message -->
     <div class="overlay" id="overlay">
         <h2>Hey love, I want to ask you some questions and I want you to be honest. If you agree to these terms, then agree by clicking on proceed!</h2>
         <p>Oii jhoot mt bolna kyuki pakad leti h ye website</p>
-        <input type="checkbox" id="agreeCheckbox">
-        <label for="agreeCheckbox">I agree</label><br><br>
-        <button id="proceedButton" disabled onclick="proceed()">Proceed</button>
+        <label>
+            <input type="checkbox" id="agreeCheckbox"> I agree to these terms
+        </label>
+        <button id="proceedButton" onclick="showContent()">Proceed</button>
     </div>
 
     <!-- Sahi Jawab for First Question -->
@@ -257,15 +256,13 @@
     </div>
 
     <script>
-        // Enable the Proceed button if the checkbox is checked
-        document.getElementById('agreeCheckbox').addEventListener('change', function() {
-            document.getElementById('proceedButton').disabled = !this.checked;
-        });
-
-        function proceed() {
-            // Hide the overlay and show the main content
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('ahanaContainer').style.display = 'block';
+        function showContent() {
+            if (document.getElementById('agreeCheckbox').checked) {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('ahanaContainer').style.display = 'block';
+            } else {
+                alert('Please agree to the terms to proceed.');
+            }
         }
 
         function moveButton() {
@@ -309,19 +306,21 @@
 
         function showLoveMessage() {
             const loveMessageDiv = document.getElementById('loveMessage');
-            loveMessageDiv.style.visibility = 'visible';
+    loveMessageDiv.style.visibility = 'visible';
 
-            // Trigger the flower shower effect
-            triggerFlowerShower();
+    // Delay the flower shower effect by 1 second (you can adjust the value)
+    setTimeout(() => {
+        flowerShower();
+    }, 1000); // Delay of 1 second before the flowers start falling
 
-            setTimeout(() => {
-                loveMessageDiv.style.visibility = 'hidden';
-            }, 2000);
+    setTimeout(() => {
+        loveMessageDiv.style.visibility = 'hidden';
+    }, 2000);
+
         }
 
-        function triggerFlowerShower() {
-            // Create flower elements and add them to the body
-            const numberOfFlowers = 20;
+        function flowerShower() {
+            const numberOfFlowers = 20; // You can change the number of flowers falling
             for (let i = 0; i < numberOfFlowers; i++) {
                 const flower = document.createElement('img');
                 flower.src = 'https://img.icons8.com/ios/50/000000/flower.png'; // You can replace with any flower image
