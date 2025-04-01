@@ -9,16 +9,97 @@
 
         body {
             font-family: 'Playfair Display', serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
             background: linear-gradient(135deg, #ffe6f0, #ffffff);
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             padding: 10px;
             position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Full screen message overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center;     /* Center horizontally */
+            text-align: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Ensure no content is cut off */
+        }
+
+        .overlay h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            max-width: 90%; /* Reduced max width for smaller screens */
+            word-wrap: break-word;
+        }
+
+        .overlay p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+            max-width: 90%; /* Reduced max width for smaller screens */
+            word-wrap: break-word;
+        }
+
+        .overlay input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .overlay label {
+            font-size: 1.2rem;
+        }
+
+        .overlay button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            background-color: #4a4a4a;
+            color: white;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 20px;
+        }
+
+        .overlay button:hover {
+            background-color: #6b6b6b;
+            transform: scale(1.05);
+        }
+
+        /* Adjustments for smaller screens */
+        @media (max-width: 600px) {
+            .overlay h2 {
+                font-size: 1.5rem;  /* Smaller heading font size */
+                margin-bottom: 10px;
+            }
+
+            .overlay p {
+                font-size: 1rem;  /* Smaller paragraph font size */
+            }
+
+            .overlay button {
+                padding: 12px 24px;  /* Adjust button size */
+                font-size: 14px;      /* Smaller font size for button */
+            }
         }
 
         .container {
@@ -31,6 +112,8 @@
             max-width: 400px;
             width: 100%;
             margin-bottom: 20px;
+            display: none; /* Initially hidden */
+            z-index: 1; /* Ensure it's below the flower shower */
         }
 
         h1 {
@@ -91,7 +174,6 @@
             margin-top: 5px;
         }
 
-        /* Sahi Jawab & Love Message Styling */
         .sahi-jawab, .love-message {
             position: fixed;
             top: 0;
@@ -106,36 +188,46 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            z-index: 1000;
+            z-index: 10000; /* Ensure it's on top */
             padding: 20px;
             box-sizing: border-box;
             border-radius: 0 0 20px 20px;
             visibility: hidden;
         }
 
-        /* Responsive Design */
         @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-            }
-
-            button {
-                padding: 12px 20px;
-                font-size: 14px;
-                min-width: 100px;
-            }
-
-            .container {
-                padding: 30px 20px;
-            }
-
             .sahi-jawab, .love-message {
                 font-size: 3rem;
             }
         }
+
+        .flower {
+            position: absolute;
+            top: -50px;
+            animation: flowerFall 2s forwards;
+            z-index: 9999; /* Ensure flowers fall on top */
+            opacity: 1;
+        }
+
+        @keyframes flowerFall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
     </style>
 </head>
 <body>
+
+    <!-- Overlay message -->
+    <div class="overlay" id="overlay">
+        <h2>Hey love, I want to ask you some questions and I want you to be honest. If you agree to these terms, then agree by clicking on proceed!</h2>
+        <p>Oii jhoot mt bolna kyuki pakad leti h ye website</p>
+        <label>
+            <input type="checkbox" id="agreeCheckbox"> I agree to these terms
+        </label>
+        <button id="proceedButton" onclick="showContent()">Proceed</button>
+    </div>
 
     <!-- Sahi Jawab for First Question -->
     <div class="sahi-jawab" id="sahiJawab1">Sahi Jawab!</div>
@@ -148,7 +240,7 @@
         <h1>Ahana, do you want us to work together even after we leave this job?</h1>
         <div class="button-container">
             <button class="yes-button" onclick="showSahiJawab(1)">Yes</button>
-            <button class="no-button" id="noButton" onclick="moveButton()">No</button>
+            <button class="no-button" id="noButton" onclick="moveButton('noButton')">No</button>
             <div class="no-message" id="noMessage">Jhoothi, sahi jawab select karo</div>
         </div>
         <div class="result" id="result"></div>
@@ -159,18 +251,26 @@
         <h1>Do you love me, cutie?</h1>
         <div class="button-container">
             <button class="yes-button" onclick="showLoveMessage()">Yes</button>
-            <button class="no-button" id="noButton2" onclick="moveButton()">No</button>
+            <button class="no-button" id="noButton2" onclick="moveButton('noButton2')">No</button>
             <div class="no-message" id="noMessage2">Jhoothi, sahi jawab select karo</div>
         </div>
         <div class="result" id="result2"></div>
     </div>
 
     <script>
-        function moveButton() {
-            const noButton = document.activeElement.id === 'noButton' ? document.getElementById('noButton') : document.getElementById('noButton2');
+        function showContent() {
+            if (document.getElementById('agreeCheckbox').checked) {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('ahanaContainer').style.display = 'block';
+            } else {
+                alert('Please agree to the terms to proceed.');
+            }
+        }
+
+        function moveButton(buttonId) {
+            const noButton = document.getElementById(buttonId);
             const noMessage = document.getElementById(noButton.id === 'noButton' ? 'noMessage' : 'noMessage2');
 
-            // Increase the angle on each click/touch
             const angle = (parseInt(noButton.dataset.angle) || 0) + 45;
             noButton.dataset.angle = angle;
 
@@ -180,8 +280,6 @@
             const newX = radius * Math.cos(radians);
             const newY = radius * Math.sin(radians);
 
-            // Apply the transform and ensure the button moves correctly
-            noButton.style.transition = 'transform 0.3s ease-in-out'; // Added smooth transition
             noButton.style.transform = `translate(${newX}px, ${newY}px)`;
 
             // Show the message just below the button
@@ -212,16 +310,31 @@
             const loveMessageDiv = document.getElementById('loveMessage');
             loveMessageDiv.style.visibility = 'visible';
 
+            // Delay the flower shower effect by 1 second
+            setTimeout(() => {
+                flowerShower();
+            }, 1000);
+
             setTimeout(() => {
                 loveMessageDiv.style.visibility = 'hidden';
             }, 2000);
         }
 
-        // Ensure the function triggers for both mouse clicks and touch events
-        document.getElementById('noButton').addEventListener('click', moveButton);
-        document.getElementById('noButton').addEventListener('touchstart', moveButton);  // Added touch event listener for mobile
-        document.getElementById('noButton2').addEventListener('click', moveButton);
-        document.getElementById('noButton2').addEventListener('touchstart', moveButton);  // Added touch event listener for mobile
+        function flowerShower() {
+            for (let i = 0; i < 20; i++) {
+                let flower = document.createElement('div');
+                flower.classList.add('flower');
+                flower.style.left = `${Math.random() * 100}%`;
+                flower.style.animationDuration = `${Math.random() * 2 + 1}s`;
+
+                document.body.appendChild(flower);
+
+                setTimeout(() => {
+                    flower.remove();
+                }, 3000); // Remove the flower after animation completes
+            }
+        }
     </script>
+
 </body>
 </html>
