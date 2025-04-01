@@ -170,6 +170,7 @@
             const noButton = document.activeElement.id === 'noButton' ? document.getElementById('noButton') : document.getElementById('noButton2');
             const noMessage = document.getElementById(noButton.id === 'noButton' ? 'noMessage' : 'noMessage2');
 
+            // Increase the angle on each click/touch
             const angle = (parseInt(noButton.dataset.angle) || 0) + 45;
             noButton.dataset.angle = angle;
 
@@ -179,6 +180,8 @@
             const newX = radius * Math.cos(radians);
             const newY = radius * Math.sin(radians);
 
+            // Apply the transform and ensure the button moves correctly
+            noButton.style.transition = 'transform 0.3s ease-in-out'; // Added smooth transition
             noButton.style.transform = `translate(${newX}px, ${newY}px)`;
 
             // Show the message just below the button
@@ -213,6 +216,12 @@
                 loveMessageDiv.style.visibility = 'hidden';
             }, 2000);
         }
+
+        // Ensure the function triggers for both mouse clicks and touch events
+        document.getElementById('noButton').addEventListener('click', moveButton);
+        document.getElementById('noButton').addEventListener('touchstart', moveButton);  // Added touch event listener for mobile
+        document.getElementById('noButton2').addEventListener('click', moveButton);
+        document.getElementById('noButton2').addEventListener('touchstart', moveButton);  // Added touch event listener for mobile
     </script>
 </body>
 </html>
