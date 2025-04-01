@@ -9,16 +9,77 @@
 
         body {
             font-family: 'Playfair Display', serif;
+            margin: 0;
+            background: linear-gradient(135deg, #ffe6f0, #ffffff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Full screen message overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #ffe6f0, #ffffff);
-            color: #333;
-            padding: 10px;
-            position: relative;
+            text-align: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .overlay h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            max-width: 80%;
+        }
+
+        .overlay p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+            max-width: 80%;
+        }
+
+        .overlay input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .overlay label {
+            font-size: 1.2rem;
+        }
+
+        .overlay button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            background-color: #4a4a4a;
+            color: white;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 20px;
+        }
+
+        .overlay button:hover {
+            background-color: #6b6b6b;
+            transform: scale(1.05);
         }
 
         .container {
@@ -31,6 +92,8 @@
             max-width: 400px;
             width: 100%;
             margin-bottom: 20px;
+            display: none; /* Initially hidden */
+            z-index: 1; /* Ensure it's below the flower shower */
         }
 
         h1 {
@@ -91,6 +154,25 @@
             margin-top: 5px;
         }
 
+        /* Flower Shower Animation */
+        .flower {
+            position: absolute;
+            top: -50px;
+            animation: fall 2s ease-in forwards;
+            z-index: 9999; /* Ensure flowers appear above everything else */
+        }
+
+        @keyframes fall {
+            0% {
+                top: -50px;
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
         /* Sahi Jawab & Love Message Styling */
         .sahi-jawab, .love-message {
             position: fixed;
@@ -106,7 +188,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            z-index: 1000;
+            z-index: 10000; /* Ensure it's on top */
             padding: 20px;
             box-sizing: border-box;
             border-radius: 0 0 20px 20px;
@@ -137,6 +219,15 @@
 </head>
 <body>
 
+    <!-- Full Screen Message Overlay -->
+    <div class="overlay" id="overlay">
+        <h2>Hey love, I want to ask you some questions and I want you to be honest. If you agree to these terms, then agree by clicking on proceed!</h2>
+        <p>Oii jhoot mt bolna kyuki pakad leti h ye website</p>
+        <input type="checkbox" id="agreeCheckbox">
+        <label for="agreeCheckbox">I agree</label><br><br>
+        <button id="proceedButton" disabled onclick="proceed()">Proceed</button>
+    </div>
+
     <!-- Sahi Jawab for First Question -->
     <div class="sahi-jawab" id="sahiJawab1">Sahi Jawab!</div>
 
@@ -166,6 +257,17 @@
     </div>
 
     <script>
+        // Enable the Proceed button if the checkbox is checked
+        document.getElementById('agreeCheckbox').addEventListener('change', function() {
+            document.getElementById('proceedButton').disabled = !this.checked;
+        });
+
+        function proceed() {
+            // Hide the overlay and show the main content
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('ahanaContainer').style.display = 'block';
+        }
+
         function moveButton() {
             const noButton = document.activeElement.id === 'noButton' ? document.getElementById('noButton') : document.getElementById('noButton2');
             const noMessage = document.getElementById(noButton.id === 'noButton' ? 'noMessage' : 'noMessage2');
@@ -209,9 +311,31 @@
             const loveMessageDiv = document.getElementById('loveMessage');
             loveMessageDiv.style.visibility = 'visible';
 
+            // Trigger the flower shower effect
+            triggerFlowerShower();
+
             setTimeout(() => {
                 loveMessageDiv.style.visibility = 'hidden';
             }, 2000);
+        }
+
+        function triggerFlowerShower() {
+            // Create flower elements and add them to the body
+            const numberOfFlowers = 20;
+            for (let i = 0; i < numberOfFlowers; i++) {
+                const flower = document.createElement('img');
+                flower.src = 'https://img.icons8.com/ios/50/000000/flower.png'; // You can replace with any flower image
+                flower.classList.add('flower');
+                flower.style.left = `${Math.random() * 100}vw`; // Random horizontal position
+                flower.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random fall speed
+                flower.style.animationDelay = `${Math.random() * 2}s`; // Random delay for staggered fall
+                document.body.appendChild(flower);
+
+                // Remove flower after animation
+                flower.addEventListener('animationend', () => {
+                    flower.remove();
+                });
+            }
         }
     </script>
 </body>
